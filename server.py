@@ -19,14 +19,16 @@ def hello(env, start):
 def quotes(env, start):
     return respond(env, start, "text/plain", "QUOTES!")
 
+routes = {
+  "quotes.js": quotes
+}
+
 #
 # application
 
 def application(environment, start_response):
     path0 = environment.get('PATH_INFO').split('/')[1]
-    route = {
-      "quotes.js": quotes
-    }.get(path0, hello)
+    route = routes.get(path0, hello)
     return route(environment, start_response)
 
 make_server('127.0.0.1', 8080, application).serve_forever()
