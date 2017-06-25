@@ -7,7 +7,6 @@ from wsgiref.simple_server import make_server
 # route helpers
 
 def respond(env, start, content_type, body, status='200 OK'):
-    status = status
     headers = [
       ('Content-Type', content_type),
       ('Content-Length', str(len(body))) ]
