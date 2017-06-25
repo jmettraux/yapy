@@ -1,12 +1,16 @@
 
+from cgi import parse_qs
 from wsgiref.simple_server import make_server
 
 
+#
+# route helpers
+
 def respond(env, start, content_type, body):
-    status = "200 OK"
+    status = '200 OK'
     headers = [
-      ("Content-Type", content_type),
-      ("Content-Length", str(len(body))) ]
+      ('Content-Type', content_type),
+      ('Content-Length', str(len(body))) ]
     start(status, headers)
     return [ body ]
 
@@ -14,13 +18,16 @@ def respond(env, start, content_type, body):
 # route implementations
 
 def hello(env, start):
-    return respond(env, start, "text/plain", "Hello.")
+    return respond(env, start, 'text/plain', 'Hello.')
 
 def quotes(env, start):
-    return respond(env, start, "text/plain", "QUOTES!")
+    params = parse_qs(env['QUERY_STRING'])
+    tickers = params.get('tickers', [ '' ])[0].split(',')
+    body = 'quotes for ' + ', '.join(tickers)
+    return respond(env, start, 'text/plain', body)
 
 routes = {
-  "quotes.js": quotes
+  'quotes.js': quotes
 }
 
 #
