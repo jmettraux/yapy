@@ -1,22 +1,23 @@
 
 from wsgiref.simple_server import make_server
 
+
+def respond(env, start, content_type, body):
+    status = "200 OK"
+    headers = [
+      ("Content-Type", content_type),
+      ("Content-Length", str(len(body))) ]
+    start(status, headers)
+    return [ body ]
+
 #
 # route implementations
 
 def hello(env, start):
-    res_body = "Hello."
-    res_status = "200 OK"
-    res_headers = [ ("Content-Length", str(len(res_body))) ]
-    start(res_status, res_headers)
-    return [ res_body ]
+    return respond(env, start, "text/plain", "Hello.")
 
 def quotes(env, start):
-    res_body = "QUOTES!"
-    res_status = "200 OK"
-    res_headers = [ ("Content-Length", str(len(res_body))) ]
-    start(res_status, res_headers)
-    return [ res_body ]
+    return respond(env, start, "text/plain", "QUOTES!")
 
 #
 # application
