@@ -2,6 +2,7 @@
 from cgi import parse_qs
 from urllib import quote
 from wsgiref.simple_server import make_server
+import time
 import json
 import requests
 
@@ -10,6 +11,8 @@ import requests
 # "business" functions
 
 def fetch_yahoo_tickers(tickers):
+
+    t0 = time.time()
 
     tickers = \
       ','.join(map((lambda t: '"' + t + '"'), tickers.split(',')))
@@ -27,8 +30,6 @@ def fetch_yahoo_tickers(tickers):
     if res.status_code != 200: return res.status_code
 
     data = res.json()['query']
-    #print data['count']
-    print 'fetching ' + tickers + ', found ' + str(data['count']) + ' quotes'
 
     quotes = data['results']['quote']
     if data['count'] < 2: quotes = [ quotes ]
@@ -39,7 +40,10 @@ def fetch_yahoo_tickers(tickers):
         currency=q['Currency'], \
         price=float(q['LastTradePriceOnly'])),
       quotes)
-    print result
+    #print result
+    print 'fetching ' + tickers + \
+      ', found ' + str(data['count']) + ' quotes' + \
+      ', took ' + str(time.time() - t0) + 's'
 
     return result
 
