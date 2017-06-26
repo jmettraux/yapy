@@ -75,7 +75,11 @@ def quotes(env, start):
       body = body + \
         'window._quotes["' + str(q['symbol']) + '"] = ' + json.dumps(q) + ';\n'
 
-    return respond(env, start, 'application/javascript', body)
+    start('200 OK', [
+      ('Content-Type', 'application/javascript'),
+      ('Content-Length', str(len(body))),
+      ('Cache-Control', 'max-age=300') ])
+    return [ body ]
 
 routes = {
   'quotes.js': quotes
