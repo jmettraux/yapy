@@ -2,6 +2,7 @@
 from cgi import parse_qs
 from urllib import quote
 from wsgiref.simple_server import make_server
+import json
 import requests
 
 
@@ -59,11 +60,18 @@ def fourofour(env, start):
     return respond(env, start, 'text/plain', 'Four O Four', '404 Not Found.')
 
 def quotes(env, start):
+
     params = parse_qs(env['QUERY_STRING'])
     tickers = params.get('tickers', [ '' ])[0]
-    data = fetch_yahoo_tickers(tickers)
-    body = 'len: ' + str(len(data))
-    return respond(env, start, 'text/plain', body)
+
+    quotes = fetch_yahoo_tickers(tickers)
+
+    body = 'window._quotes = window._quotes || {};\n'
+    for q in quotes:
+      body = body + \
+        'window._quotes["' + str(q['symbol']) + '"] = ' + json.dumps(q) + ';\n'
+
+    return respond(env, start, 'application/javascript', body)
 
 routes = {
   'quotes.js': quotes
@@ -73,8 +81,10 @@ routes = {
 # application
 
 def application(environment, start_response):
+
     path0 = environment.get('PATH_INFO').split('/')[1]
     route = routes.get(path0, fourofour)
+
     return route(environment, start_response)
 
 make_server('127.0.0.1', 8080, application).serve_forever()
