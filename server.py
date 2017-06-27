@@ -1,10 +1,11 @@
 
-from cgi import parse_qs
-from urllib import quote
-from wsgiref.simple_server import make_server
+import os
 import time
 import json
 import requests
+from cgi import parse_qs
+from urllib import quote
+from wsgiref.simple_server import make_server
 
 
 #
@@ -95,5 +96,9 @@ def application(environment, start_response):
 
     return route(environment, start_response)
 
-make_server('127.0.0.1', 8080, application).serve_forever()
+make_server(
+  '127.0.0.1',
+  int(os.environ['YAPY_PORT']),
+  application
+).serve_forever()
 
