@@ -1,0 +1,9 @@
+
+*.swp
+
+.vimrc
+.viminfo
+
+.notes.md
+.todo.md
+
