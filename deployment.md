@@ -59,5 +59,6 @@ server {
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Host $host;
   }
+}
 ```
 
